@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:testapp/Pertemuan2.dart';
+import 'package:testapp/Pertemuan4FormPage.dart';
+import 'package:testapp/Pertemuan4ProfilePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,10 +18,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/', // Set initial route
       routes: {
         '/': (context) => const HomePage(),
         '/pertemuan2': (context) => const Pertemuan2(),
+        '/pertemuan4_form_page': (context) => const Pertemuan4FormPage(),
+        '/pertemuan4_profile_page': (context) => const Pertemuan4ProfilePage(),
       },
     );
   }
@@ -37,6 +41,14 @@ class HomePage extends StatelessWidget {
           ListTile(
             title: const Text('Pertemuan 2'),
             onTap: () => Navigator.pushNamed(context, '/pertemuan2'),
+          ),
+          ListTile(
+            title: const Text('Pertemuan 4 Form Page'),
+            onTap: () => Navigator.pushNamed(context, '/pertemuan4_form_page'),
+          ),
+          ListTile(
+            title: const Text('Pertemuan 4 Profile Page'),
+            onTap: () => Navigator.pushNamed(context, '/pertemuan4_profile_page'),
           ),
         ],
       ),
