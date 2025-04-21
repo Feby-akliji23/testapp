@@ -1,7 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
 import '../models/profile_model.dart';
 import '../helpers/db_helper.dart';
@@ -15,14 +15,18 @@ class Pertemuan4FormPage extends StatefulWidget {
 
 class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
   final _formKey = GlobalKey<FormState>();
+
+  // Controllers
   final _namaController = TextEditingController();
   final _nimController = TextEditingController();
   final _fakultasController = TextEditingController();
   final _prodiController = TextEditingController();
   final _alamatController = TextEditingController();
   final _hpController = TextEditingController();
+
   File? _image;
 
+  // Ambil gambar dari galeri
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -33,6 +37,7 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
     }
   }
 
+  // Simpan data ke DB & SharedPreferences
   Future<void> _saveData() async {
     final profile = Profile(
       nama: _namaController.text,
@@ -45,11 +50,11 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
     );
 
     int id = await DBHelper.insertProfile(profile);
-
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('profileId', id);
 
     if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -68,6 +73,7 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
     );
   }
 
+  // Widget field input
   Widget _buildInput(TextEditingController controller, String label, TextInputType type) {
     return TextFormField(
       controller: controller,
@@ -82,7 +88,8 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
           borderSide: BorderSide.none,
         ),
       ),
-      validator: (value) => value == null || value.isEmpty ? '$label tidak boleh kosong' : null,
+      validator: (value) =>
+          value == null || value.isEmpty ? '$label tidak boleh kosong' : null,
     );
   }
 
@@ -90,11 +97,13 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: const BackButton(color: Colors.black),
       ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Form(
@@ -109,11 +118,13 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
               ),
               const SizedBox(height: 6),
               const Text(
-                "Don't worry, only you can see your personal data. No one else will be able to see it.",
+                "Don't worry, only you can see your personal data.",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 20),
+
+              // Foto profil + tombol edit
               Center(
                 child: Stack(
                   alignment: Alignment.bottomRight,
@@ -141,7 +152,9 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 30),
+
               _buildInput(_namaController, 'Nama', TextInputType.name),
               const SizedBox(height: 16),
               _buildInput(_nimController, 'NIM', TextInputType.number),
@@ -153,7 +166,10 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
               _buildInput(_alamatController, 'Alamat', TextInputType.streetAddress),
               const SizedBox(height: 16),
               _buildInput(_hpController, 'Nomor HP', TextInputType.phone),
+
               const SizedBox(height: 30),
+
+              // Tombol simpan
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -170,6 +186,7 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
                 ),
                 child: const Text('Complete Profile', style: TextStyle(fontSize: 16)),
               ),
+
               const SizedBox(height: 30),
             ],
           ),
