@@ -3,6 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
+import '../models/profile_model.dart';
+import '../helpers/db_helper.dart';
+
 class Pertemuan4FormPage extends StatefulWidget {
   const Pertemuan4FormPage({super.key});
 
@@ -31,24 +34,27 @@ class _Pertemuan4FormPageState extends State<Pertemuan4FormPage> {
   }
 
   Future<void> _saveData() async {
+    final profile = Profile(
+      nama: _namaController.text,
+      nim: _nimController.text,
+      fakultas: _fakultasController.text,
+      prodi: _prodiController.text,
+      alamat: _alamatController.text,
+      hp: _hpController.text,
+      fotoPath: _image?.path,
+    );
+
+    int id = await DBHelper.insertProfile(profile);
+
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('nama', _namaController.text);
-    prefs.setString('nim', _nimController.text);
-    prefs.setString('fakultas', _fakultasController.text);
-    prefs.setString('prodi', _prodiController.text);
-    prefs.setString('alamat', _alamatController.text);
-    prefs.setString('hp', _hpController.text);
-    if (_image != null) {
-      prefs.setString('foto', _image!.path);
-    }
+    await prefs.setInt('profileId', id);
 
     if (!mounted) return;
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sukses'),
-        content: const Text('Data berhasil disimpan!'),
+        content: const Text('Data berhasil disimpan ke database!'),
         actions: [
           TextButton(
             onPressed: () {

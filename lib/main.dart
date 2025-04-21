@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:testapp/Pertemuan2.dart';
-import 'package:testapp/Pertemuan4FormPage.dart';
-import 'package:testapp/Pertemuan4ProfilePage.dart';
+import 'package:testapp/pages/Pertemuan2.dart';
+import 'package:testapp/pages/Pertemuan4FormPage.dart';
+import 'package:testapp/pages/Pertemuan4ProfilePage.dart';
 
 void main() {
   runApp(const MyApp());

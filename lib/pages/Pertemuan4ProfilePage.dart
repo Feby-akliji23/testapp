@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
+import '../helpers/db_helper.dart';
+
 class Pertemuan4ProfilePage extends StatefulWidget {
   const Pertemuan4ProfilePage({super.key});
 
@@ -25,42 +27,74 @@ class _Pertemuan4ProfilePageState extends State<Pertemuan4ProfilePage> {
   }
 
   Future<void> _loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _nama = prefs.getString('nama') ?? '';
-      _nim = prefs.getString('nim') ?? '';
-      _fakultas = prefs.getString('fakultas') ?? '';
-      _prodi = prefs.getString('prodi') ?? '';
-      _alamat = prefs.getString('alamat') ?? '';
-      _hp = prefs.getString('hp') ?? '';
-      final fotoPath = prefs.getString('foto');
-      if (fotoPath != null && fotoPath.isNotEmpty) {
-        _image = File(fotoPath);
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getInt('profileId');
+
+    if (id != null) {
+      final profile = await DBHelper.getProfileById(id);
+      if (profile != null) {
+        setState(() {
+          _nama = profile.nama;
+          _nim = profile.nim;
+          _fakultas = profile.fakultas;
+          _prodi = profile.prodi;
+          _alamat = profile.alamat;
+          _hp = profile.hp;
+          if (profile.fotoPath != null) {
+            _image = File(profile.fotoPath!);
+          }
+        });
       }
-    });
+    }
   }
 
-  Widget _buildInfoTile(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 6),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            value.isNotEmpty ? value : '-',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF3E322D)),
-          ),
+  Widget _buildProfileCard() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      color: Colors.grey[100],
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSingleField('Nama', _nama),
+            _buildSingleField('NIM', _nim),
+            _buildSingleField('Fakultas', _fakultas),
+            _buildSingleField('Prodi', _prodi),
+            _buildSingleField('Alamat', _alamat),
+            _buildSingleField('Nomor HP', _hp),
+          ],
         ),
-        const SizedBox(height: 16),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildSingleField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF3E322D),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value.isNotEmpty ? value : '-',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -101,12 +135,7 @@ class _Pertemuan4ProfilePageState extends State<Pertemuan4ProfilePage> {
               ),
             ),
             const SizedBox(height: 30),
-            _buildInfoTile('Nama', _nama),
-            _buildInfoTile('NIM', _nim),
-            _buildInfoTile('Fakultas', _fakultas),
-            _buildInfoTile('Prodi', _prodi),
-            _buildInfoTile('Alamat', _alamat),
-            _buildInfoTile('Nomor HP', _hp),
+            _buildProfileCard(),
             const SizedBox(height: 30),
           ],
         ),
